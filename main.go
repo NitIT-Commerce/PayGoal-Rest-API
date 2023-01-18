@@ -22,8 +22,21 @@ func getCustomers(context *gin.Context) {
 	context.IndentedJSON(http.StatusOK, customers)
 }
 
+func addCustomer(context *gin.Context) {
+	var newCustomer customer
+	if err := context.BindJSON(&newCustomer); err != nil {
+		return
+	}
+
+	customers = append(customers, newCustomer)
+
+	context.IndentedJSON(http.StatusCreated, newCustomer)
+
+}
+
 func main() {
 	router := gin.Default()
 	router.GET("/customers", getCustomers)
+	router.POST("/addcustomer", addCustomer)
 	router.Run("localhost:9090")
 }
