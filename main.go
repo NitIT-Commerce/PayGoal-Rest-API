@@ -9,19 +9,19 @@ import (
 	"log"
 	"net/http"
 	_ "net/http"
+	"test/database"
 	http2 "test/http"
-	"test/utils"
 )
 
 func main() {
 
-	container := &utils.Helper{}
+	container := &database.Container{}
 	r := http2.InitializeRoutes(container)
 	server := &http.Server{
-		Addr:    "localhost:9090",
+		Addr:    ":9091",
 		Handler: r,
 	}
-	log.Println("Running on " + server.Addr)
+	log.Println("Running...")
 
 	err := server.ListenAndServe()
 	if err != nil {

@@ -2,10 +2,11 @@
  * Copyright (c) by Lukas Nickel, PayGoal UG 2023.
  */
 
-package utils
+package database
 
 import (
 	"gorm.io/gorm"
+	"log"
 )
 
 type DB struct {
@@ -13,5 +14,7 @@ type DB struct {
 }
 
 func NewStorage(db *gorm.DB) *DB {
+	log.Println("Somethig went wrong3")
+
 	return &DB{db: db}
 }

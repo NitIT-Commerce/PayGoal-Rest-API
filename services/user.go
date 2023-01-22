@@ -6,24 +6,25 @@ package services
 
 import (
 	_ "github.com/go-sql-driver/mysql"
+	"log"
 	"test/models"
-	"test/utils"
 )
 
 type UserService struct {
-	container *utils.Helper
+	repository models.UserRepository
 }
 
-func NewUserService(container *utils.Helper) *UserService {
-	return &UserService{container: container}
+func NewUserService(repo models.UserRepository) *UserService {
+	return &UserService{repository: repo}
 }
 
-func (user *UserService) GetAllUsers() ([]models.Users, error) {
-	var users []models.Users
+func (service *UserService) GetAllUsers() ([]models.CD, error) {
+	var users []models.CD
 
 	/*, user_login, user_pass, user_finapi_pass, user_nicename, user_email, activation_code, user_registered, is_verified, last_name, first_name, user_credentials" */
-	err := user.container.DB.Select("paygoal_app.users.ID").First(users).Error
+	users, err := service.repository.GetUsers()
 	if err != nil {
+		log.Println("Somethig went wrong")
 		return nil, err
 	}
 
@@ -46,4 +47,11 @@ func (user *UserService) GetAllUsers() ([]models.Users, error) {
 	}
 
 	return newUsers, nil
+
+	/*var newUsers []models.Users
+	newUsers = append(newUsers, models.Users{
+		ID: "1",
+	})
+
+	return newUsers, nil*/
 }

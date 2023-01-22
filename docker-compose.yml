@@ -1,0 +1,25 @@
+services:
+  db2:
+    platform: linux/amd64
+    image: library/mariadb:latest
+    restart: unless-stopped
+    container_name: sqlinit2
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+    ports:
+      - "6044:3306"
+    volumes:
+      - ./custom.cnf:/etc/mysql/conf.d/custom.cnf
+  phpmyadmin2:
+    platform: linux/amd64
+    image: phpmyadmin/phpmyadmin
+    container_name: pma2
+    links:
+      - db2
+    environment:
+      PMA_HOST: sqlinit2
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8082:80

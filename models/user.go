@@ -1,7 +1,7 @@
 package models
 
 type Users struct {
-	ID string `json:"id"`
+	ID string `json:"ID"`
 	/*UserLogin       string `json:"user_login"`
 	UserPass        string `json:"user_pass"`
 	UserFinApiPass  string `json:"user_finapi_pass"`
@@ -17,6 +17,10 @@ type Users struct {
 
 type UserService interface {
 	GetAllUsers() ([]Users, error)
+}
+
+type UserRepository interface {
+	testRepository
 }
 
 func (*Users) TableName() string {
