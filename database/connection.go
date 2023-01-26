@@ -5,16 +5,38 @@
 package database
 
 import (
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
 )
 
 type DB struct {
-	db *gorm.DB
+	db     *gorm.DB
+	DB     *gorm.DB
+	SqlCon *DB
 }
 
 func NewStorage(db *gorm.DB) *DB {
-	log.Println("Somethig went wrong3")
-
 	return &DB{db: db}
+}
+
+func (db *DB) GetMariaDb() *DB {
+	if db.SqlCon == nil {
+		maria := NewStorage(db.GetConnection())
+		db.SqlCon = maria
+	}
+	return db.SqlCon
+}
+
+func (db *DB) GetConnection() *gorm.DB {
+	if db.DB == nil {
+
+		gormDb, err := gorm.Open(mysql.New(mysql.Config{
+			DSN: dbUri,
+		}), &gorm.Config{})
+		if err != nil {
+			panic("could not connect to database")
+		}
+		db.DB = gormDb
+	}
+	return db.DB
 }

@@ -6,31 +6,23 @@ package http
 
 import (
 	"github.com/gorilla/mux"
-	"log"
 	"test/database"
 	v1 "test/http/rest/v1"
 	"test/services"
 )
 
-func InitializeRoutes(con *database.Container) *mux.Router {
+func InitializeRoutes(con *database.DB) *mux.Router {
 	r := mux.NewRouter()
 
-	log.Println("Router izz da")
-
 	//Register Services
-	var userService = services.NewUserService(con.GetSqlConnection())
-
-	log.Println("Service izz da")
+	var userService = services.NewUserService(con.GetMariaDb())
 
 	//Register Controller
-	userController := v1.NewUserController(userService)
-	log.Println("Controller izz da")
+	var userController = v1.NewUserController(userService)
 
 	//Register Endpoints
 	r.Use(v1.CorsMiddleware)
-
 	r.HandleFunc("/paygoal/users", userController.GetAllUsers).Methods("GET")
-	log.Println("Endpoint izz da")
 
 	return r
 }

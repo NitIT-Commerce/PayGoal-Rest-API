@@ -7,14 +7,14 @@ package v1
 import (
 	"encoding/json"
 	"net/http"
-	"test/models"
+	"test/services"
 )
 
 type UserController struct {
-	User models.UserService
+	User *services.UserService
 }
 
-func NewUserController(user models.UserService) *UserController {
+func NewUserController(user *services.UserService) *UserController {
 	return &UserController{
 		User: user,
 	}

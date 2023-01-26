@@ -14,11 +14,11 @@ import (
 )
 
 func main() {
+	container := &database.DB{}
 
-	container := &database.Container{}
 	r := http2.InitializeRoutes(container)
 	server := &http.Server{
-		Addr:    ":9091",
+		Addr:    fmt.Sprintf(":%s", "9091"),
 		Handler: r,
 	}
 	log.Println("Running...")

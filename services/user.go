@@ -5,23 +5,22 @@
 package services
 
 import (
-	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"test/database"
 	"test/models"
 )
 
 type UserService struct {
-	repository models.UserRepository
+	repository database.UserRepository
 }
 
-func NewUserService(repo models.UserRepository) *UserService {
+func NewUserService(repo database.UserRepository) *UserService {
 	return &UserService{repository: repo}
 }
 
-func (service *UserService) GetAllUsers() ([]models.CD, error) {
-	var users []models.CD
+func (service *UserService) GetAllUsers() ([]models.Users, error) {
+	var users []models.Users
 
-	/*, user_login, user_pass, user_finapi_pass, user_nicename, user_email, activation_code, user_registered, is_verified, last_name, first_name, user_credentials" */
 	users, err := service.repository.GetUsers()
 	if err != nil {
 		log.Println("Somethig went wrong")
@@ -31,8 +30,8 @@ func (service *UserService) GetAllUsers() ([]models.CD, error) {
 	var newUsers []models.Users
 	for _, user := range users {
 		newUsers = append(newUsers, models.Users{
-			ID: user.ID,
-			/*UserLogin:       user.UserLogin,
+			ID:              user.ID,
+			UserLogin:       user.UserLogin,
 			UserPass:        user.UserPass,
 			UserFinApiPass:  user.UserFinApiPass,
 			UserNicename:    user.UserNicename,
@@ -42,7 +41,7 @@ func (service *UserService) GetAllUsers() ([]models.CD, error) {
 			IsVerified:      user.IsVerified,
 			LastName:        user.LastName,
 			FirstName:       user.FirstName,
-			UserCredentials: user.UserCredentials,*/
+			UserCredentials: user.UserCredentials,
 		})
 	}
 
