@@ -17,4 +17,10 @@ type Users struct {
 
 type UserService interface {
 	GetAllUsers() ([]Users, error)
+	GetUserByID(userid string) ([]Users, error)
+	CreateUser(userEmail string,
+		userPass string,
+		userNickname string,
+		userName string,
+		userLastName string) ([]Users, error)
 }

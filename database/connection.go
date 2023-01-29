@@ -5,6 +5,7 @@
 package database
 
 import (
+	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -29,7 +30,7 @@ func (db *DB) GetMariaDb() *DB {
 
 func (db *DB) GetConnection() *gorm.DB {
 	if db.DB == nil {
-
+		dbUri := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", "", "", "", "", "")
 		gormDb, err := gorm.Open(mysql.New(mysql.Config{
 			DSN: dbUri,
 		}), &gorm.Config{})

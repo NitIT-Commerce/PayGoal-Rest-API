@@ -23,6 +23,8 @@ func InitializeRoutes(con *database.DB) *mux.Router {
 	//Register Endpoints
 	r.Use(v1.CorsMiddleware)
 	r.HandleFunc("/paygoal/users", userController.GetAllUsers).Methods("GET")
+	r.HandleFunc("/paygoal/users", userController.CreateUser).Methods("POST")
+	r.HandleFunc("/paygoal/users/{id}", userController.GetUserByID).Methods("GET")
 
 	return r
 }
