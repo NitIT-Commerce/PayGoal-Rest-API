@@ -42,6 +42,8 @@ type params struct {
 
 type UserRepository interface {
 	GetUsers() ([]models.Users, error)
+	UpdateUserByID(userId string, field string, value string) error
+	DeleteUserByID(userId string) error
 	GetUserByID(userId string) ([]models.Users, error)
 	CreateUser(
 		userEmail string,
@@ -125,13 +127,54 @@ func (db *DB) CreateUser(userEmail string, userPass string, userNickname string,
 	return newUsers, err
 }
 
-func (db *DB) GetUserByID(id string) ([]models.Users, error) {
+func (db *DB) GetUsers() ([]models.Users, error) {
 	var users []Users
 	err := db.db.
 		Select("paygoal_app.users.ID as ID, " +
 			"paygoal_app.users.user_login as user_login, " +
 			"paygoal_app.users.user_pass, " +
 			"paygoal_app.users.user_finapi_pass, " +
+			"paygoal_app.users.user_nicename, " +
+			"paygoal_app.users.user_email, " +
+			"paygoal_app.users.activation_code, " +
+			"paygoal_app.users.user_registered, " +
+			"paygoal_app.users.is_verified, " +
+			"paygoal_app.users.last_name, " +
+			"paygoal_app.users.first_name, " +
+			"paygoal_app.users.user_credentials ").
+		Find(&users).Error
+	if err != nil {
+		return nil, err
+	}
+
+	var newUsers []models.Users
+	for _, user := range users {
+		newUsers = append(newUsers, models.Users{
+			ID:              user.ID,
+			UserLogin:       user.UserLogin,
+			UserPass:        user.UserPass,
+			UserFinApiPass:  user.UserFinApiPass,
+			UserNicename:    user.UserNicename,
+			UserEmail:       user.UserEmail,
+			ActivationCode:  user.ActivationCode,
+			UserRegistered:  user.UserRegistered,
+			IsVerified:      user.IsVerified,
+			LastName:        user.LastName,
+			FirstName:       user.FirstName,
+			UserCredentials: user.UserCredentials,
+		})
+	}
+
+	return newUsers, nil
+}
+
+func (db *DB) GetUserByID(id string) ([]models.Users, error) {
+	var users []Users
+	err := db.db.
+		Select("paygoal_app.users.ID as ID, " +
+			"paygoal_app.users.user_login as user_login, " +
+			"paygoal_app.users.user_pass, " +
+			"paygoal_app.users.user_fin_api_pass, " +
 			"paygoal_app.users.user_nicename, " +
 			"paygoal_app.users.user_email, " +
 			"paygoal_app.users.activation_code, " +
@@ -167,45 +210,28 @@ func (db *DB) GetUserByID(id string) ([]models.Users, error) {
 	return newUsers, err
 }
 
-func (db *DB) GetUsers() ([]models.Users, error) {
+func (db *DB) UpdateUserByID(id string, field string, value string) error {
 	var users []Users
-	err := db.db.
-		Select("paygoal_app.users.ID as ID, " +
-			"paygoal_app.users.user_login as user_login, " +
-			"paygoal_app.users.user_pass, " +
-			"paygoal_app.users.user_finapi_pass, " +
-			"paygoal_app.users.user_nicename, " +
-			"paygoal_app.users.user_email, " +
-			"paygoal_app.users.activation_code," +
-			"paygoal_app.users.user_registered," +
-			"paygoal_app.users.is_verified," +
-			"paygoal_app.users.last_name," +
-			"paygoal_app.users.first_name," +
-			"paygoal_app.users.user_credentials ").
+	err := db.db.Model(&users).
+		Where(fmt.Sprintf("paygoal_app.users.ID = %s", id)).
+		Update(fmt.Sprintf("paygoal_app.users.%s", field), value).
 		Find(&users).Error
 	if err != nil {
-		return nil, err
+		return err
 	}
+	return err
+}
 
-	var newUsers []models.Users
-	for _, user := range users {
-		newUsers = append(newUsers, models.Users{
-			ID:              user.ID,
-			UserLogin:       user.UserLogin,
-			UserPass:        user.UserPass,
-			UserFinApiPass:  user.UserFinApiPass,
-			UserNicename:    user.UserNicename,
-			UserEmail:       user.UserEmail,
-			ActivationCode:  user.ActivationCode,
-			UserRegistered:  user.UserRegistered,
-			IsVerified:      user.IsVerified,
-			LastName:        user.LastName,
-			FirstName:       user.FirstName,
-			UserCredentials: user.UserCredentials,
-		})
+func (db *DB) DeleteUserByID(id string) error {
+	var users []Users
+	err := db.db.
+		Where(fmt.Sprintf("paygoal_app.users.ID = %s", id)).
+		Delete(&users).
+		Find(&users).Error
+	if err != nil {
+		return err
 	}
-
-	return newUsers, err
+	return err
 }
 
 func GenerateFromPassword(password string, p *params) (encodedHash string, err error) {

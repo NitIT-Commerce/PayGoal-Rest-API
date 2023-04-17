@@ -31,7 +31,7 @@ func (service *UserService) CreateUser(userEmail string,
 		userName,
 		userLastName)
 	if err != nil {
-		log.Println("Somethig went wrong")
+		log.Println(err)
 		return nil, err
 	}
 
@@ -61,7 +61,7 @@ func (service *UserService) GetUserByID(userId string) ([]models.Users, error) {
 
 	users, err := service.repository.GetUserByID(userId)
 	if err != nil {
-		log.Println("Somethig went wrong")
+		log.Println(err)
 		return nil, err
 	}
 
@@ -88,12 +88,34 @@ func (service *UserService) GetUserByID(userId string) ([]models.Users, error) {
 	return newUsers, nil
 }
 
-func (service *UserService) GetAllUsers() ([]models.Users, error) {
+func (service *UserService) UpdateUserByID(userId string, userField string, userFieldValue string) error {
+
+	err := service.repository.UpdateUserByID(userId, userField, userFieldValue)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+func (service *UserService) DeleteUserByID(userId string) error {
+
+	err := service.repository.DeleteUserByID(userId)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+func (service *UserService) GetUsers() ([]models.Users, error) {
 	var users []models.Users
 
 	users, err := service.repository.GetUsers()
 	if err != nil {
-		log.Println("Somethig went wrong")
+		log.Println(err)
 		return nil, err
 	}
 
