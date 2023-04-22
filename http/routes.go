@@ -16,9 +16,11 @@ func InitializeRoutes(con *database.DB) *mux.Router {
 
 	//Register Services
 	var userService = services.NewUserService(con.GetMariaDb())
+	var groupService = services.NewGroupService(con.GetMariaDb())
 
 	//Register Controller
 	var userController = v1.NewUserController(userService)
+	var groupController = v1.NewGroupController(groupService)
 
 	//Register Endpoints
 	r.Use(v1.CorsMiddleware)
@@ -28,5 +30,7 @@ func InitializeRoutes(con *database.DB) *mux.Router {
 	r.HandleFunc("/paygoal/users/", userController.UpdateUserByID).Methods("PUT")
 	r.HandleFunc("/paygoal/users/", userController.DeleteUserByID).Methods("DELETE")
 
+	r.HandleFunc("/paygoal/groups", groupController.GetGroups).Methods("GET")
+	r.HandleFunc("/paygoal/groups", groupController.CreateGroup).Methods("POST")
 	return r
 }
